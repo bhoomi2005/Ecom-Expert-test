@@ -858,7 +858,8 @@
               "options__2": {
                 "label": "Pills"
               }
-            }
+            },
+            "show_color_swatches": { "label": "Show Color option as Swatches" }
           }
         },
         "buy_buttons": {

@@ -956,6 +956,19 @@ class VariantSelects extends HTMLElement {
   constructor() {
     super();
     this.addEventListener('change', this.onVariantChange);
+    let variantSelects = this;
+    let selectElement = this.querySelector('.select__select');
+    /* Color swatches JS */
+    this.swatches = this.querySelectorAll('.color-swatch__item');
+    this.swatches.forEach(function(elem){
+      elem.addEventListener('click', function(){
+        let swatchValue = this.getAttribute('data-value');
+        selectElement.value = swatchValue;
+        if(variantSelects.querySelector('.color-swatch__item.selected')) variantSelects.querySelector('.color-swatch__item.selected').classList.remove('selected');
+        this.classList.add('selected');
+        variantSelects.dispatchEvent(new Event('change'));
+      });
+    })
   }
 
   onVariantChange() {
@@ -971,7 +984,7 @@ class VariantSelects extends HTMLElement {
       this.setUnavailable();
     } else {
       this.updateMedia();
-      this.updateURL();
+      //this.updateURL();
       this.updateVariantInput();
       this.renderProductInfo();
       this.updateShareUrl();
@@ -1026,6 +1039,12 @@ class VariantSelects extends HTMLElement {
       const input = productForm.querySelector('input[name="id"]');
       input.value = this.currentVariant.id;
       input.dispatchEvent(new Event('change', { bubbles: true }));
+
+      if(productForm.querySelector('input[name="bundle_id"]')){
+        const bundleInput = productForm.querySelector('input[name="bundle_id"]');
+        let bundle_id = this.querySelector('.variant_dropdowns option[value="'+this.currentVariant.id+'"]').getAttribute('data-bundle-product');
+        bundleInput.value = bundle_id;
+      }
     });
   }
 
@@ -1050,7 +1069,7 @@ class VariantSelects extends HTMLElement {
       if (listOfAvailableOptions.includes(input.getAttribute('value'))) {
         input.innerText = input.getAttribute('value');
       } else {
-        input.innerText = window.variantStrings.unavailable_with_option.replace('[value]', input.getAttribute('value'));
+        //input.innerText = window.variantStrings.unavailable_with_option.replace('[value]', input.getAttribute('value'));
       }
     });
   }
@@ -1136,7 +1155,7 @@ class VariantSelects extends HTMLElement {
 
         const addButtonUpdated = html.getElementById(`ProductSubmitButton-${sectionId}`);
         this.toggleAddButton(
-          addButtonUpdated ? addButtonUpdated.hasAttribute('disabled') : true,
+          addButtonUpdated ? false : true,
           window.variantStrings.soldOut
         );
 
@@ -1178,7 +1197,7 @@ class VariantSelects extends HTMLElement {
     const pricePerItem = document.getElementById(`Price-Per-Item-${this.dataset.section}`);
 
     if (!addButton) return;
-    addButtonText.textContent = window.variantStrings.unavailable;
+    //addButtonText.textContent = window.variantStrings.unavailable;
     if (price) price.classList.add('visibility-hidden');
     if (inventory) inventory.classList.add('visibility-hidden');
     if (sku) sku.classList.add('visibility-hidden');

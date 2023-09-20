@@ -283,9 +283,21 @@
                             </button>
                           </quantity-input>
                         </div>
+                        {% assign attached_bundle_id = '' %}
+                        {%- for c_item in cart.items -%}
+                          {%- for property in c_item.properties -%}
+                            {% assign property_value = property.last | times: 1 %}
+                            {% assign variant_id = item.variant_id | times: 1 %}
+                            {%- if property.first == '__bundle_product' and property_value == variant_id %}
+                              {% assign attached_bundle_id = c_item.variant_id %}
+                            {%- endif -%}
+                          {%- endfor -%}
+                        {%- endfor -%}
                         <cart-remove-button
                           id="Remove-{{ item.index | plus: 1 }}"
                           data-index="{{ item.index | plus: 1 }}"
+                          data-variant-id="{{ item.variant_id }}"
+                          data-bundle-id="{{ attached_bundle_id }}"
                         >
                           <a
                             href="{{ item.url_to_remove }}"

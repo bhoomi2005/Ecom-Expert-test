@@ -31,6 +31,7 @@ if (!customElements.get('product-form')) {
         delete config.headers['Content-Type'];
 
         const formData = new FormData(this.form);
+
         if (this.cart) {
           formData.append(
             'sections',
@@ -65,8 +66,31 @@ if (!customElements.get('product-form')) {
               return;
             }
 
-            if (!this.error)
+            if (!this.error){
               publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form', productVariantId: formData.get('id'), cartData: response });
+              /* Start - Adding Bundle product */
+              var json = [];
+              if(formData.get('bundle_id') != ''){
+                json.push({ 'id': formData.get('bundle_id'), 'quantity': formData.get('quantity'), 'properties': { '__bundle_product': formData.get('id') } });
+
+                let bundleFormData = JSON.stringify({'items': json});
+                let headers = {
+                  'Content-Type': 'application/json'
+                };
+
+                fetch(`${routes.cart_add_url}`, {
+                  method: 'POST',
+                  credentials: 'same-origin',
+                  headers: headers,
+                  body: bundleFormData
+                })
+                .then((response) => response.json())
+                .then((response) => {
+                  if (response.status) {}
+                });
+              }
+              /* End - Bundle product added */
+            }
             this.error = false;
             const quickAddModal = this.closest('quick-add-modal');
             if (quickAddModal) {

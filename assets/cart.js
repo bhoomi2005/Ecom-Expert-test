@@ -29,6 +29,24 @@ class CartItems extends HTMLElement {
 
   connectedCallback() {
     this.cartUpdateUnsubscriber = subscribe(PUB_SUB_EVENTS.cartUpdate, (event) => {
+      /* Start - Removing bundle product if there is any */
+      let cartItems = event.cartData.items;
+      let bundle_product_found = false;
+        let bundle_variant_index = ''
+        for(var i=0; i<cartItems.length; i++){
+          var line_item = cartItems[i];
+          if(line_item.properties.__bundle_product != ''){
+            var bundle_variant_id = line_item.properties.__bundle_product;
+            bundle_variant_index = i;
+            for(var i=0; i<cartItems.length; i++){
+              if(cartItems[i].id == bundle_variant_id) bundle_product_found = true
+            }
+          }
+        }
+        if(!bundle_product_found){
+          this.updateQuantity(bundle_variant_index, 0);
+        }
+        /* End - Bundle product removed */
       if (event.source === 'cart-items') {
         return;
       }
@@ -144,6 +162,7 @@ class CartItems extends HTMLElement {
             section.selector
           );
         });
+
         const updatedValue = parsedState.items[line - 1] ? parsedState.items[line - 1].quantity : undefined;
         let message = '';
         if (items.length === parsedState.items.length && updatedValue !== parseInt(quantityElement.value)) {

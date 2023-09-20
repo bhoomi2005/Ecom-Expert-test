@@ -47,13 +47,30 @@
           <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
             {{ option.name }}
           </label>
-          <div class="select">
+          {%- if option.name == 'Color' and block.settings.show_color_swatches -%}
+            <color-swatch class="color-swatch">
+              {%- for value in option.values -%}
+                {% assign swatch_image = '' %}
+                {% for variant in product.variants %}
+                  {% if variant.title contains value and variant.featured_image %}
+                    {% assign swatch_image = variant.featured_image %}
+                  {% endif %}
+                {% endfor %}
+                <div
+                  class="color-swatch__item {% if option.selected_value == value %}selected{% endif %}"
+                  data-value="{{ value }}"
+                ><img srcset="{% if swatch_image != '' %}{{ swatch_image | img_url: '100x' }}{% else %}{{ value | handleize | append: '.png' | file_url }}{% endif %}" loading="lazy" alt="{{ value }}" /></div>
+              {%- endfor -%}
+            </color-swatch>
+          {%- endif -%}
+          <div class="select {% if option.name == 'Color' and block.settings.show_color_swatches %}hidden{% endif %}">
             <select
               id="Option-{{ section.id }}-{{ forloop.index0 }}"
               class="select__select"
               name="options[{{ option.name | escape }}]"
               form="{{ product_form_id }}"
             >
+              <option value="">Unselected</option>
               {% render 'product-variant-options', product: product, option: option, block: block %}
             </select>
             {% render 'icon-caret' %}
@@ -64,6 +81,18 @@
       <script type="application/json">
         {{ product.variants | json }}
       </script>
+
+      <div class="hidden">
+        <select class="variant_dropdowns">
+          {% for variant in product.variants %}
+            {% assign bundle_product_id = '' %}
+            {% if variant.metafields.custom.bundle_product != blank %}
+              {% assign bundle_product_id = variant.metafields.custom.bundle_product.value.selected_or_first_available_variant.id %}
+            {% endif %}
+            <option value="{{ variant.id }}" data-bundle-product="{{ bundle_product_id }}">{{ variant.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
     </variant-selects>
   {%- endif -%}
 {%- endunless -%}
