@@ -83,10 +83,6 @@ if (!customElements.get('product-form')) {
                   credentials: 'same-origin',
                   headers: headers,
                   body: bundleFormData
-                })
-                .then((response) => response.json())
-                .then((response) => {
-                  if (response.status) {}
                 });
               }
               /* End - Bundle product added */

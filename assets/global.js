@@ -1154,10 +1154,12 @@ class VariantSelects extends HTMLElement {
           inventoryDestination.classList.toggle('visibility-hidden', inventorySource.innerText === '');
 
         const addButtonUpdated = html.getElementById(`ProductSubmitButton-${sectionId}`);
-        this.toggleAddButton(
-          addButtonUpdated ? false : true,
-          window.variantStrings.soldOut
-        );
+        if(!this.options.includes('Unselected')){
+          this.toggleAddButton(
+            addButtonUpdated ? false : true,
+            window.variantStrings.soldOut
+          );
+        }
 
         publish(PUB_SUB_EVENTS.variantChange, {
           data: {
