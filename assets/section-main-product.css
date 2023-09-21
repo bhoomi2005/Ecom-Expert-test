@@ -1598,3 +1598,9 @@ a.product__text {
     border: none;
   }
 }
+
+/* Color swatches */
+.product-form__input .color-swatch{ display: flex; gap: 10px; }
+.product-form__input .color-swatch .color-swatch__item{ width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+.product-form__input .color-swatch .color-swatch__item img{ width: 50%; height: 50%; object-fit: contain; }
+.product-form__input .color-swatch .color-swatch__item.selected{ background-color: #000; }

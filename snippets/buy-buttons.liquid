@@ -59,6 +59,17 @@
           class="product-variant-id"
         >
 
+        {% assign bundle_variant_id = '' %}
+        {% if product.selected_or_first_available_variant.metafields.custom.bundle_product != blank %}
+          {% assign bundle_product_id = product.selected_or_first_available_variant.metafields.custom.bundle_product.value.selected_or_first_available_variant.id %}
+        {% endif %}
+        <input
+            type="hidden"
+            name="bundle_id"
+            value="{{ bundle_product_id }}"
+            class="product-bundle-variant-id"
+          >
+
         {%- if gift_card_recipient_feature_active -%}
           {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
         {%- endif -%}
@@ -77,6 +88,7 @@
             id="ProductSubmitButton-{{ section_id }}"
             type="submit"
             name="add"
+            disabled
             class="product-form__submit button button--full-width {% if show_dynamic_checkout %}button--secondary{% else %}button--primary{% endif %}"
             {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
               disabled
